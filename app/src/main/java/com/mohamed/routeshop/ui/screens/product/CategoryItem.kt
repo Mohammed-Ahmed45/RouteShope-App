@@ -22,6 +22,7 @@ fun CategoryItem(
     onClick: () -> Unit,
     isSelected: Boolean,
 ) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth()

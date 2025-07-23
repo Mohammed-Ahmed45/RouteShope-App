@@ -36,6 +36,7 @@ fun SubCategoryContent(
 
     ) {
 
+
     Column {
         Card(
             modifier = Modifier
@@ -58,7 +59,7 @@ fun SubCategoryContent(
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
-                    model = product.image ?: R.drawable.img_placeholder,
+                    model = product.image ?: R.drawable.ic_placeholder,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth(),
