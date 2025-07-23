@@ -6,6 +6,7 @@ import com.mohamed.data.api.model.response.auth.AuthResponseDto
 import com.mohamed.data.api.model.response.brands.BrandsResponseDto
 import com.mohamed.data.api.model.response.categories.CategoriesResponseDto
 import com.mohamed.data.api.model.response.product.ProductResponseDto
+import com.mohamed.data.api.model.response.productdetails.ProductDetailsResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -29,8 +30,16 @@ interface ApiServices {
     @GET("v1/categories/{categoryId}/subcategories")
     suspend fun getSubCategory(@Path("categoryId") categoryId: String): Response<CategoriesResponseDto>
 
+
     @GET("v1/products")
     suspend fun getProducts(): Response<ProductResponseDto>
+
+    @GET("v1/products/{productId}")
+    suspend fun getProductsDetails(@Path("productId") productId: String): Response<ProductDetailsResponseDto>
+
+
+//    @POST("v1/auth/signup")
+//    suspend fun signUp(@Body request: SignUpRequestDto): Response<AuthResponseDto>
 
 
 }
