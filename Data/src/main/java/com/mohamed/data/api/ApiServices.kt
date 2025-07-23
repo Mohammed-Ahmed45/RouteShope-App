@@ -30,11 +30,16 @@ interface ApiServices {
     @GET("v1/categories/{categoryId}/subcategories")
     suspend fun getSubCategory(@Path("categoryId") categoryId: String): Response<CategoriesResponseDto>
 
+
     @GET("v1/products")
     suspend fun getProducts(): Response<ProductResponseDto>
 
     @GET("v1/products/{productId}")
     suspend fun getProductsDetails(@Path("productId") productId: String): Response<ProductDetailsResponseDto>
+
+
+//    @POST("v1/auth/signup")
+//    suspend fun signUp(@Body request: SignUpRequestDto): Response<AuthResponseDto>
 
 
 }
