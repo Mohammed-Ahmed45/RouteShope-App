@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mohamed.data.repositories.datasource.AuthOfflineDataSource
 import com.mohamed.domain.model.auth.SignInRequest
 import com.mohamed.domain.model.auth.SignUpRequest
 import com.mohamed.domain.usecases.auth.SignInUseCase
@@ -19,7 +20,12 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
     private val signInUseCase: SignInUseCase,
+    private val authOfflineDataSource: AuthOfflineDataSource, // Add this dependency
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "AuthViewModel"
+    }
 
     // Form fields
     var name by mutableStateOf("")
@@ -115,18 +121,6 @@ class AuthViewModel @Inject constructor(
         return emailError == null
     }
 
-//    val isPasswordValid = when {
-//        password.isBlank() -> {
-//            passwordError = "Password is required"
-//            false
-//        }
-//
-//        else -> {
-//            passwordError = null
-//            true
-//        }
-//    }
-
     private fun validatePhone(): Boolean {
         // Remove all non-digit characters for validation
         val digitsOnly = phone.filter { it.isDigit() }
@@ -157,7 +151,7 @@ class AuthViewModel @Inject constructor(
             !password.matches(Regex(".*\\d.*")) ->
                 "Password must contain at least one number"
 
-            !password.matches(Regex(".*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) ->
+            !password.matches(Regex(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) ->
                 "Password must contain at least one special character"
 
             password.contains(" ") -> "Password cannot contain spaces"
@@ -236,6 +230,15 @@ class AuthViewModel @Inject constructor(
                 val response = signUpUseCase.invoke(request)
 
                 if (response != null) {
+                    try {
+                        authOfflineDataSource.saveUser(response)
+                        Log.d(TAG, "User data saved successfully after signup")
+                        Log.d(TAG, "Saved token: ${!response.token.isNullOrEmpty()}")
+                        Log.d(TAG, "Saved user: ${response.user?.email}")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error saving user data after signup: ${e.message}")
+                    }
+
                     onSuccess()
                 } else {
                     registrationError = "Registration failed. Please try again."
@@ -257,7 +260,7 @@ class AuthViewModel @Inject constructor(
                     else -> "Registration failed. Please try again"
                 }
                 onFail()
-                Log.e("AuthViewModel", "signUp error: ${e.message}", e)
+                Log.e(TAG, "signUp error: ${e.message}", e)
             } finally {
                 isLoading = false
             }
@@ -281,17 +284,30 @@ class AuthViewModel @Inject constructor(
                 val response = signInUseCase.invoke(request)
 
                 if (response != null) {
-                    onSuccess
+                    try {
+                        authOfflineDataSource.saveUser(response)
+                        Log.d(TAG, "User data saved successfully after sign in")
+                        Log.d(TAG, "Saved token: ${!response.token.isNullOrEmpty()}")
+                        Log.d(TAG, "Saved user: ${response.user?.email}")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error saving user data after sign in: ${e.message}")
+                    }
+
+                    onSuccess()
                 } else {
-                    registrationError = "Registration failed. Please try again."
+                    registrationError = "Sign in failed. Please try again."
                     onFail()
                 }
 
             } catch (e: Exception) {
                 handleError(e)
                 registrationError = when {
+                    e.message?.contains("401") == true ||
+                            e.message?.contains("unauthorized", ignoreCase = true) == true ->
+                        "Invalid email or password"
+
                     e.message?.contains("email", ignoreCase = true) == true ->
-                        "This email is already registered"
+                        "Invalid email or password"
 
                     e.message?.contains("network", ignoreCase = true) == true ->
                         "Network error. Please check your connection"
@@ -299,14 +315,14 @@ class AuthViewModel @Inject constructor(
                     e.message?.contains("timeout", ignoreCase = true) == true ->
                         "Request timed out. Please try again"
 
-                    else -> "Registration failed. Please try again"
+                    else -> "Sign in failed. Please try again"
                 }
 
                 onFail()
+                Log.e(TAG, "signIn error: ${e.message}", e)
             } finally {
                 isLoading = false
             }
         }
-
     }
 }

@@ -2,7 +2,6 @@ package com.mohamed.routeshop.ui.navigation
 
 //import com.mohamed.routeshop.ui.screens.signup.RegisterScreen
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,6 +33,7 @@ object Route {
     const val PRODUCT_CONTENT = "ProductContent"
 
     const val FAVORITE_SCREEN = "FavoriteScreen"
+    const val PRODUCT_ID = "productId"
 
     const val CART_SCREEN = "CartScreen"
 
@@ -41,14 +41,14 @@ object Route {
     const val PRODUCT_SCREEN_WITH_CATEGORY = "ProductScreenWithCategory"
     const val PRODUCT_DETAILS_SCREEN = "ProductDetailsScreen"
 
-    const val PRODUCT_ID = "productId"
 
     const val CATEGORY_ID = "categoryId"
+
 }
 
 
 @Composable
-fun Nav(modifier: Modifier = Modifier) {
+fun Nav() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Route.SPLASH) {
         composable(Route.SPLASH) { SplashScreen(navController = navController) }
@@ -69,7 +69,6 @@ fun Nav(modifier: Modifier = Modifier) {
                 navController = navController
             )
         }
-//        composable(Route.SUB_CATEGORY_CONTENT) { SubCategoryContent(navController = navController) }
         composable(Route.PRODUCT_SCREEN) {
             ProductScreen(navController = navController)
         }
@@ -86,29 +85,6 @@ fun Nav(modifier: Modifier = Modifier) {
                 categoryId = categoryId
             )
         }
+
     }
 }
-//@Composable
-//fun Nav(modifier: Modifier = Modifier) {
-//    val navController = rememberNavController()
-//    NavHost(navController = navController, startDestination = Route.SPLASH) {
-//        composable(Route.SPLASH) { SplashScreen(navController = navController) }
-//        composable(Route.LOGIN_SCREEN) { LogInScreen(navController = navController) }
-//        composable(Route.REGISTER_SCREEN) { RegisterScreen(navController = navController) }
-//        composable(Route.MAIN_SCREEN) { MainScreen(navController = navController) }
-//        composable(Route.HOME_SCREEN) { HomeScreen(navController = navController) }
-//        composable(
-//            route = "${Route.PRODUCT_SCREEN}/${Route.CATEGORY_ID}",
-//            arguments = listOf(navArgument(Route.CATEGORY_ID) {
-//                type = NavType.StringType
-//            })
-//
-//        ) { backStackEntry ->
-//            val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
-//            ProductScreen(
-//                navController = navController,
-//                categoryId = categoryId
-//            )
-//        }
-//    }
-//}

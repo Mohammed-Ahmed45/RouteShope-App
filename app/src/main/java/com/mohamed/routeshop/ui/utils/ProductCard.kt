@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -43,15 +44,16 @@ import com.mohamed.domain.model.product.ProductList
 import com.mohamed.routeshop.R
 import com.mohamed.routeshop.ui.navigation.Route.PRODUCT_DETAILS_SCREEN
 import com.mohamed.routeshop.ui.theme.colors
+import com.mohamed.routeshop.ui.viewmodel.WishListViewModel
 
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
     navController: NavController,
     productItems: ProductList,
-    onProductClick: (ProductList) -> Unit = {},
-    onAddToCartClick: (ProductList) -> Unit = {},
-) {
+    wishListViewModel: WishListViewModel = hiltViewModel(),
+
+    ) {
     Card(
         modifier = modifier
             .padding(8.dp)
@@ -125,14 +127,12 @@ fun ProductCard(
                 }
             }
 
-            // Product Details
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(12.dp)
             ) {
-                // Product Title
                 Text(
                     text = productItems.title ?: "Product Name",
                     fontSize = 16.sp,
@@ -143,7 +143,6 @@ fun ProductCard(
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
 
-                // Product Description
                 Text(
                     text = productItems.description ?: "Product Description",
                     fontSize = 12.sp,
@@ -153,7 +152,6 @@ fun ProductCard(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                // Price Section
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -191,22 +189,23 @@ fun ProductCard(
                             .background(
                                 color = colors.LightBlue,
                                 shape = CircleShape
-                            )
-                            .clickable { onAddToCartClick(productItems) },
-                        contentAlignment = Alignment.Center
+                            ), contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add_to_cart),
                             contentDescription = "Add to Cart",
                             tint = Color.White,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable {
+                                    wishListViewModel.addToWishList(productItems.id!!)
+                                }
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Rating and Reviews
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -230,7 +229,6 @@ fun ProductCard(
                         )
                     }
 
-                    // Reviews Count
                     Text(
                         text = "${productItems.ratingsQuantity ?: 0} reviews",
                         fontSize = 12.sp,
@@ -260,12 +258,6 @@ fun ProductCardPreview() {
     ProductCard(
         navController = navController,
         productItems = productItems,
-        onProductClick = {
-            // Handle product click
-        },
-        onAddToCartClick = {
-            // Handle add to cart click
-        }
     )
 }
 
