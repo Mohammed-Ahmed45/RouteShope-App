@@ -1,9 +1,16 @@
 package com.mohamed.data.api
 
+import android.util.Log
+import com.google.gson.Gson
+import com.mohamed.data.interceptor.OkHttpAuthInterceptor
+import com.mohamed.data.interceptor.OkHttpCacheInterceptor
+import com.mohamed.data.interceptor.OkHttpOfflineCacheInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Cache
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -14,23 +21,42 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitClient {
 
-
     private const val BASE_URL = "https://ecommerce.routemisr.com/api/"
 
-    @Provides
+
     @Singleton
+    @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+        val loggingInterceptor = HttpLoggingInterceptor {
+            Log.e("api->", it)
         }
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        return loggingInterceptor
     }
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+    fun provideHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        @OkHttpAuthInterceptor authInterceptor: Interceptor,
+        cache: Cache,
+        @OkHttpCacheInterceptor cacheInterceptor: Interceptor,
+        @OkHttpOfflineCacheInterceptor offlineCacheInterceptor: Interceptor,
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(authInterceptor)
+            .cache(cache)
+            .addNetworkInterceptor(cacheInterceptor)
+            .addInterceptor(offlineCacheInterceptor)
             .build()
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return Gson()
     }
 
     @Provides
