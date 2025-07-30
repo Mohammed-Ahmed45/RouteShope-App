@@ -17,26 +17,35 @@ import javax.inject.Inject
 @HiltViewModel
 class WishListViewModel @Inject constructor(
     private val wishListUseCase: WishListUseCase,
-//    private val tokenManager: TokenManager,
 ) : ViewModel() {
-    val wishlistProductIds = mutableStateListOf<String>()
-    val wishListItems = mutableStateListOf<ProductList>()
+    var wishlistProductIds = mutableStateListOf<String>()
+    var wishListItems = mutableStateListOf<ProductList>()
     var successMessage by mutableStateOf<String?>(null)
+
+//    private val _wishlistIds = MutableStateFlow<List<String>>(emptyList())
+
+
+//    fun isProductInWishList(productId: String): Flow<Boolean> {
+//        return _wishlistIds.map { ids ->
+//            ids.contains(productId) || wishlistProductIds.contains(productId)
+//        }
+//    }
 
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
+
     fun getWishList() {
         viewModelScope.launch {
             try {
                 isLoading = true
-                errorMessage = null
                 val response = wishListUseCase.getWishlist()
                 if (response?.isNotEmpty() == true) {
                     wishListItems.clear()
                     wishListItems.addAll(response)
 
                     wishlistProductIds.clear()
-                    wishlistProductIds.addAll(response.map { it.id.orEmpty() })
+                    wishlistProductIds.addAll(response.mapNotNull { it.id })
+
                 }
             } catch (e: Exception) {
                 handleError(e)
@@ -52,8 +61,7 @@ class WishListViewModel @Inject constructor(
                 isLoading = true
                 errorMessage = null
 
-
-                val response = wishListUseCase.addToWishlist(
+                wishListUseCase.addToWishlist(
                     productId = productId
                 )
 
@@ -61,42 +69,49 @@ class WishListViewModel @Inject constructor(
                     wishlistProductIds.add(productId)
                 }
 
-                successMessage = "Product added to wishlist successfully"
+                successMessage = "ProductCartItemDto added to wishlist successfully"
                 delay(3000)
                 successMessage = null
 
             } catch (e: Exception) {
                 handleError(e)
                 errorMessage = "Failed to add product to wishlist"
+
+                wishlistProductIds.remove(productId)
+            } finally {
+                isLoading = false
             }
         }
     }
 
-
     fun deleteFromWishList(productId: String) {
         viewModelScope.launch {
             try {
+                errorMessage = null
 
                 val response = wishListUseCase.deleteFromWishlist(productId)
 
                 if (response.isNullOrEmpty()) {
                     wishlistProductIds.remove(productId)
-
                     wishListItems.removeAll { item ->
                         item.id == productId
                     }
-
                 }
 
-                successMessage = "Product removed from wishlist successfully"
-                delay(3000)
+                delay(100)
+                getWishList()
                 successMessage = null
-
 
             } catch (e: Exception) {
                 handleError(e)
-                errorMessage = "Failed to add product to delete from wishlist"
+                errorMessage = "Failed to delete product from wishlist"
+                if (!wishlistProductIds.contains(productId)) {
+                    wishlistProductIds.add(productId)
+                }
+            } finally {
+                isLoading = false
             }
         }
     }
+
 }
