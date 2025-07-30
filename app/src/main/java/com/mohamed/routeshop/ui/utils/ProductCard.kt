@@ -24,6 +24,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +49,7 @@ import com.mohamed.domain.model.product.ProductList
 import com.mohamed.routeshop.R
 import com.mohamed.routeshop.ui.navigation.Route.PRODUCT_DETAILS_SCREEN
 import com.mohamed.routeshop.ui.theme.colors
+import com.mohamed.routeshop.ui.viewmodel.CartViewModel
 import com.mohamed.routeshop.ui.viewmodel.WishListViewModel
 
 @Composable
@@ -52,15 +58,28 @@ fun ProductCard(
     navController: NavController,
     productItems: ProductList,
     wishListViewModel: WishListViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
+) {
 
-    ) {
+    var isInWishList by remember { mutableStateOf(false) }
+
+    LaunchedEffect(productItems.id, wishListViewModel.wishlistProductIds.size) {
+        productItems.id?.let { productId ->
+            isInWishList = wishListViewModel.wishlistProductIds.contains(productId)
+        }
+    }
+
+
+    LaunchedEffect(Unit) {
+        wishListViewModel.getWishList()
+    }
+
     Card(
         modifier = modifier
             .padding(8.dp)
             .height(300.dp)
             .fillMaxWidth()
             .clickable {
-
                 navController.navigate("${PRODUCT_DETAILS_SCREEN}/${productItems.id}")
             },
         shape = RoundedCornerShape(16.dp),
@@ -70,7 +89,7 @@ fun ProductCard(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Product Image
+            // ProductCartItemDto Image
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -106,10 +125,10 @@ fun ProductCard(
                     productItems.price?.let { productItems.priceAfterDiscount!! < it } == true
                 ) {
                     val discountPercentage =
-                        ((productItems.price!! - productItems.priceAfterDiscount!!) * 100 / productItems.price!!).toInt()
+                        ((productItems.price!! - productItems.priceAfterDiscount!!) * 100 / productItems.price!!)
                     Box(
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
+                            .align(Alignment.TopStart)
                             .padding(8.dp)
                             .background(
                                 color = Color.Red,
@@ -125,6 +144,35 @@ fun ProductCard(
                         )
                     }
                 }
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .background(
+                            color = Color.White.copy(alpha = 0.9f),
+                            shape = CircleShape
+                        )
+                        .clickable {
+                            productItems.id?.let { productId ->
+                                isInWishList = !isInWishList
+                                if (isInWishList) {
+                                    wishListViewModel.addToWishList(productId)
+                                } else {
+                                    wishListViewModel.deleteFromWishList(productId)
+                                }
+                            }
+                        }
+                        .padding(8.dp)
+                ) {
+                    Image(
+                        painter = painterResource(
+                            id = if (isInWishList) R.drawable.ic_is_favorite else R.drawable.ic_favorite
+                        ),
+                        contentDescription = "",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
 
             Column(
@@ -134,7 +182,7 @@ fun ProductCard(
                     .padding(12.dp)
             ) {
                 Text(
-                    text = productItems.title ?: "Product Name",
+                    text = productItems.title ?: "ProductCartItemDto Name",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
@@ -144,7 +192,7 @@ fun ProductCard(
                 )
 
                 Text(
-                    text = productItems.description ?: "Product Description",
+                    text = productItems.description ?: "ProductCartItemDto Description",
                     fontSize = 12.sp,
                     color = Color.Gray,
                     maxLines = 1,
@@ -189,17 +237,20 @@ fun ProductCard(
                             .background(
                                 color = colors.LightBlue,
                                 shape = CircleShape
-                            ), contentAlignment = Alignment.Center
+                            )
+                            .clickable {
+                                productItems.let { productList ->
+                                    cartViewModel.addToCart(productId = productList.id!!)
+                                }
+
+                            },
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add_to_cart),
-                            contentDescription = "Add to Cart",
+                            contentDescription = "Add to DataCart",
                             tint = Color.White,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    wishListViewModel.addToWishList(productItems.id!!)
-                                }
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -246,19 +297,24 @@ fun ProductCardPreview() {
     val navController = rememberNavController()
     val productItems = ProductList(
         id = "1",
-        title = "Sample Product",
+        title = "Sample ProductCartItemDto",
         description = "This is a sample product description.",
         price = 100,
         priceAfterDiscount = 80,
-        imageCover = "https://via.placeholder.com/150",
-        images = listOf("https://via.placeholder.com/150", "https://via.placeholder.com/150"),
+        imageCover = "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+        images = listOf("https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"),
         ratingsAverage = 4.5,
-        ratingsQuantity = 120
+        ratingsQuantity = 120,
+        sold = 50,
+        quantity = 100,
+        createdAt = "2023-01-01T00:00:00.000Z",
+        updatedAt = "2023-01-01T00:00:00.000Z",
+        slug = "sample-product",
+        reviews = emptyList(),
+        v = 0
     )
     ProductCard(
         navController = navController,
-        productItems = productItems,
+        productItems = productItems
     )
 }
-
-

@@ -7,6 +7,7 @@ import com.mohamed.data.interceptor.UserDataStore
 import com.mohamed.data.repositories.auth.SignInRepoImp
 import com.mohamed.data.repositories.auth.SignUpRepoImp
 import com.mohamed.data.repositories.brands.BrandsRepoImp
+import com.mohamed.data.repositories.cart.CartRepoImp
 import com.mohamed.data.repositories.categories.CategoriesRepoImp
 import com.mohamed.data.repositories.datasource.AuthOfflineDataSource
 import com.mohamed.data.repositories.datasource.AuthOfflineDataSourceImpl
@@ -17,6 +18,7 @@ import com.mohamed.data.repositories.wishlist.WishListRepoImp
 import com.mohamed.domain.repositories.auth.SignInRepo
 import com.mohamed.domain.repositories.auth.SignUpRepo
 import com.mohamed.domain.repositories.brands.BrandsRepo
+import com.mohamed.domain.repositories.cart.CartRepo
 import com.mohamed.domain.repositories.categories.CategoriesRepo
 import com.mohamed.domain.repositories.categories.SubCategoryRepo
 import com.mohamed.domain.repositories.product.ProductDetailsRepo
@@ -67,6 +69,10 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindWishList(wishListRepoImp: WishListRepoImp): WishListRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindCartList(cartRepoImp: CartRepoImp): CartRepo
 
 }
 

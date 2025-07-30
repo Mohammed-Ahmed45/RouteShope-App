@@ -118,7 +118,7 @@ fun ContentScreen(
     when (selectedIndex) {
         0 -> HomeScreen(navController = navController)
         1 -> ProductScreen(navController = navController, categoryId = categoryId)
-        2 -> FavoriteScreen()
+        2 -> FavoriteScreen(navController = navController)
         3 -> ProfileScreen()
     }
 
