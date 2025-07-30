@@ -3,8 +3,8 @@ package com.mohamed.data.api
 import android.util.Log
 import com.google.gson.Gson
 import com.mohamed.data.interceptor.OkHttpAuthInterceptor
-import com.mohamed.data.interceptor.OkHttpCacheInterceptor
 import com.mohamed.data.interceptor.OkHttpOfflineCacheInterceptor
+import com.mohamed.data.interceptor.SmartCashInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +23,6 @@ object RetrofitClient {
 
     private const val BASE_URL = "https://ecommerce.routemisr.com/api/"
 
-
     @Singleton
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
@@ -40,18 +39,17 @@ object RetrofitClient {
         loggingInterceptor: HttpLoggingInterceptor,
         @OkHttpAuthInterceptor authInterceptor: Interceptor,
         cache: Cache,
-        @OkHttpCacheInterceptor cacheInterceptor: Interceptor,
+        @SmartCashInterceptor smartCacheInterceptor: Interceptor,
         @OkHttpOfflineCacheInterceptor offlineCacheInterceptor: Interceptor,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
             .cache(cache)
-            .addNetworkInterceptor(cacheInterceptor)
+            .addNetworkInterceptor(smartCacheInterceptor)
             .addInterceptor(offlineCacheInterceptor)
             .build()
     }
-
 
     @Provides
     @Singleton

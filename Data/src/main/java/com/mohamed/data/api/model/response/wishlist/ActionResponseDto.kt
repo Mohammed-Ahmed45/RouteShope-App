@@ -3,7 +3,7 @@ package com.mohamed.data.api.model.response.wishlist
 import com.google.gson.annotations.SerializedName
 import com.mohamed.domain.model.wishlist.WishlistActionResponse
 
-data class WishListActionResponseDto(
+data class ActionResponseDto(
 
     @field:SerializedName("data")
     val data: List<String?>? = null,

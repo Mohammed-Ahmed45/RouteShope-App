@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.mohamed.routeshop.ui.MainScreen
+import com.mohamed.routeshop.ui.screens.cart.CartScreen
 import com.mohamed.routeshop.ui.screens.home.HomeScreen
 import com.mohamed.routeshop.ui.screens.product.ProductContent
 import com.mohamed.routeshop.ui.screens.product.ProductDetailsScreen
@@ -57,6 +58,8 @@ fun Nav() {
         composable(Route.MAIN_SCREEN) { MainScreen(navController = navController) }
         composable(Route.HOME_SCREEN) { HomeScreen(navController = navController) }
         composable(Route.PRODUCT_CONTENT) { ProductContent(navController = navController) }
+
+        composable(Route.CART_SCREEN) { CartScreen(navController = navController) }
         composable(
             route = "${Route.PRODUCT_DETAILS_SCREEN}/{${Route.PRODUCT_ID}}",
             arguments = listOf(
