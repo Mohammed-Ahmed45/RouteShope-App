@@ -34,12 +34,6 @@ object InterceptorsModule {
         )
     }
 
-    @Provides
-    @Singleton
-    @OkHttpCacheInterceptor
-    fun provideCacheInterceptor(): Interceptor {
-        return CacheInterceptor()
-    }
 
     @Provides
     @Singleton
@@ -60,6 +54,13 @@ object InterceptorsModule {
 
     @Provides
     @Singleton
+    @SmartCashInterceptor
+    fun provideSmartCashInterceptor(): Interceptor {
+        return SmartCacheInterceptor()
+    }
+
+    @Provides
+    @Singleton
     @IODispatcher
     fun provideIODispatcher(): CoroutineContext = Dispatchers.IO
 
@@ -75,10 +76,6 @@ annotation class OkHttpAuthInterceptor
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class OkHttpCacheInterceptor
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
 annotation class OkHttpOfflineCacheInterceptor
 
 @Qualifier
@@ -88,3 +85,7 @@ annotation class IODispatcher
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class MainDispatcher
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class SmartCashInterceptor

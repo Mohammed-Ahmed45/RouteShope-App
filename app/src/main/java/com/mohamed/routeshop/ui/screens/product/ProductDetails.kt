@@ -58,6 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.mohamed.routeshop.R
+import com.mohamed.routeshop.ui.viewmodel.CartViewModel
 import com.mohamed.routeshop.ui.viewmodel.ProductViewModel
 
 @Composable
@@ -66,6 +67,7 @@ fun ProductDetailsScreen(
     productId: String = "",
     navController: NavController,
     productViewModel: ProductViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
 ) {
 
     var quantity by remember { mutableIntStateOf(1) }
@@ -76,7 +78,6 @@ fun ProductDetailsScreen(
 
     val productItems = productViewModel.productDetailsList.firstOrNull()
 
-    // Sample data for sizes and colors
     val sizes = listOf("38", "39", "40", "41", "42")
     val colors = listOf(
         Color.Black,
@@ -111,7 +112,7 @@ fun ProductDetailsScreen(
                     .clickable { navController.popBackStack() }
             )
             Text(
-                "Product Details",
+                "ProductCartItemDto Details",
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -132,13 +133,12 @@ fun ProductDetailsScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Image(
                     painter = painterResource(id = R.drawable.ic_cart),
-                    contentDescription = "Cart",
+                    contentDescription = "DataCart",
                     modifier = modifier.size(20.dp)
                 )
             }
         }
 
-        // Product Image
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -224,13 +224,11 @@ fun ProductDetailsScreen(
             }
         }
 
-        // Product Details
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            // Product Title
             Text(
                 text = productItems?.title ?: "Nike Air Jordan",
                 fontSize = 18.sp,
@@ -241,7 +239,6 @@ fun ProductDetailsScreen(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            // Price and Sold info
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -282,7 +279,6 @@ fun ProductDetailsScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Rating
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -335,7 +331,6 @@ fun ProductDetailsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Size Selection
             Column {
                 Text(
                     text = "Size",
@@ -411,13 +406,13 @@ fun ProductDetailsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Quantity and Add to Cart Section
+            // Quantity and Add to DataCart Section
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Quantity Selector
+
                 Column {
                     Text(
                         text = "Total price",
@@ -432,7 +427,6 @@ fun ProductDetailsScreen(
                     )
                 }
 
-                // Quantity Controls
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -481,7 +475,7 @@ fun ProductDetailsScreen(
             // Add to Cart Button
             Button(
                 onClick = {
-                    // Handle add to cart
+                    cartViewModel.addToCart(productId)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
