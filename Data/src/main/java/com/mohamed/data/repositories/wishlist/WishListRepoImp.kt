@@ -1,7 +1,7 @@
 package com.mohamed.data.repositories.wishlist
 
 import com.mohamed.data.api.ApiServices
-import com.mohamed.data.api.model.request.AddToWishlistRequestDto
+import com.mohamed.data.api.model.request.ProductRequestDto
 import com.mohamed.domain.model.product.ProductList
 import com.mohamed.domain.repositories.wishlist.WishListRepo
 import javax.inject.Inject
@@ -27,12 +27,12 @@ class WishListRepoImp @Inject constructor(
 
 
         if (productId.isNullOrEmpty()) {
-            throw IllegalArgumentException("Product ID cannot be null or empty")
+            throw IllegalArgumentException("ProductCartItemDto ID cannot be null or empty")
         }
 
         val response = apiServices.addToWishlist(
 
-            productId = AddToWishlistRequestDto(productId = productId)
+            productId = ProductRequestDto(productId = productId)
         )
         return if (response.isSuccessful) {
             response.body()?.data
