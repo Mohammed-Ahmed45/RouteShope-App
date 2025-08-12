@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,7 +50,7 @@ import coil.compose.AsyncImage
 import com.mohamed.domain.model.product.ProductList
 import com.mohamed.routeshop.R
 import com.mohamed.routeshop.ui.navigation.Route.PRODUCT_DETAILS_SCREEN
-import com.mohamed.routeshop.ui.theme.colors
+import com.mohamed.routeshop.ui.theme.Colors
 import com.mohamed.routeshop.ui.viewmodel.CartViewModel
 import com.mohamed.routeshop.ui.viewmodel.WishListViewModel
 
@@ -106,12 +108,12 @@ fun ProductCard(
                             .fillMaxSize()
                             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                         contentScale = ContentScale.Crop,
-                        error = painterResource(R.drawable.img_product),
-                        placeholder = painterResource(R.drawable.img_product)
+                        error = painterResource(R.drawable.ic_app),
+                        placeholder = painterResource(R.drawable.ic_app)
                     )
                 } else {
                     Image(
-                        painter = painterResource(R.drawable.img_product),
+                        painter = painterResource(R.drawable.ic_app),
                         contentDescription = productItems.title,
                         modifier = Modifier
                             .fillMaxSize()
@@ -165,12 +167,11 @@ fun ProductCard(
                         }
                         .padding(8.dp)
                 ) {
-                    Image(
-                        painter = painterResource(
-                            id = if (isInWishList) R.drawable.ic_is_favorite else R.drawable.ic_favorite
-                        ),
-                        contentDescription = "",
-                        modifier = Modifier.size(20.dp)
+                    Icon(
+                        imageVector = if (isInWishList) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Wishlist",
+                        tint = Colors.DarkGreen,
+                        modifier = modifier.size(12.dp)
                     )
                 }
             }
@@ -187,7 +188,7 @@ fun ProductCard(
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = colors.LightBlue,
+                    color = Colors.DarkGreen,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
 
@@ -219,14 +220,14 @@ fun ProductCard(
                                 text = "${productItems.priceAfterDiscount} EGP",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = colors.LightBlue
+                                color = Colors.DarkGreen
                             )
                         } else {
                             Text(
                                 text = "${productItems.price} EGP",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = colors.LightBlue
+                                color = Colors.DarkGreen
                             )
                         }
                     }
@@ -235,7 +236,7 @@ fun ProductCard(
                         modifier = Modifier
                             .size(36.dp)
                             .background(
-                                color = colors.LightBlue,
+                                color = Colors.DarkGreen,
                                 shape = CircleShape
                             )
                             .clickable {

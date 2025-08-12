@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.mohamed.routeshop.R
 import com.mohamed.routeshop.ui.navigation.Route
-import com.mohamed.routeshop.ui.theme.colors
+import com.mohamed.routeshop.ui.theme.Colors
 import kotlinx.coroutines.delay
 
 @Composable
@@ -104,7 +104,7 @@ fun SplashScreen(modifier: Modifier = Modifier, navController: NavController? = 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = colors.DarkGreen),
+            .background(color = Colors.DarkGreen),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
