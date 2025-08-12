@@ -24,6 +24,7 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search...",
 ) {
+
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
