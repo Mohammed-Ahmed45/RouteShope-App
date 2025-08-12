@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mohamed.domain.model.categories.CategoriesList
+import com.mohamed.routeshop.ui.theme.Colors
 
 @Composable
 fun CategoryItem(
@@ -28,7 +29,7 @@ fun CategoryItem(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color(0xFF2196F3).copy(alpha = 0.1f) else Color.Transparent
+            containerColor = if (isSelected) Colors.DarkGreen.copy(alpha = 0.1f) else Color.Transparent
         ),
 
         ) {
@@ -41,7 +42,7 @@ fun CategoryItem(
             Text(
                 text = category.name ?: "",
                 fontSize = 14.sp,
-                color = if (isSelected) Color(0xFF2196F3) else Color.Black,
+                color = if (isSelected) Colors.DarkGreen else Color.Black,
                 fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
             )
         }

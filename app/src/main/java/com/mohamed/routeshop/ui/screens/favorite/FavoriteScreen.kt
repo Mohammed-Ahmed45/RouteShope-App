@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,22 +22,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.mohamed.routeshop.ui.navigation.Route
+import com.mohamed.routeshop.ui.theme.Colors
 import com.mohamed.routeshop.ui.utils.WishlistItemCard
+import com.mohamed.routeshop.ui.viewmodel.CartViewModel
 import com.mohamed.routeshop.ui.viewmodel.WishListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteScreen(
     navController: NavController,
-    viewModel: WishListViewModel = hiltViewModel(),
+    wishListViewModel: WishListViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.getWishList()
+        wishListViewModel.getWishList()
     }
 
     Column(
@@ -54,7 +59,7 @@ fun FavoriteScreen(
                 .align(alignment = Alignment.CenterHorizontally)
         )
 
-        viewModel.successMessage?.let { message ->
+        wishListViewModel.successMessage?.let { message ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,7 +77,7 @@ fun FavoriteScreen(
         }
 
         // Error message
-        viewModel.errorMessage?.let { message ->
+        wishListViewModel.errorMessage?.let { message ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,17 +94,20 @@ fun FavoriteScreen(
             }
         }
 
-        if (viewModel.isLoading) {
+        if (wishListViewModel.isLoading) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = Colors.DarkGreen,
+                    trackColor = Color.LightGray,
+                )
             }
         }
 
         // Wishlist items
-        if (viewModel.wishListItems.isEmpty()) {
+        if (wishListViewModel.wishListItems.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -115,7 +123,8 @@ fun FavoriteScreen(
                     Button(
                         onClick = {
                             navController.navigate(Route.PRODUCT_SCREEN)
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(Colors.DarkGreen)
                     ) {
                         Text("Continue Shopping")
                     }
@@ -125,9 +134,9 @@ fun FavoriteScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(viewModel.wishListItems) { product ->
+                items(wishListViewModel.wishListItems) { product ->
                     WishlistItemCard(
-                        product = product,
+                        product = product
                     )
                 }
             }
