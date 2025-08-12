@@ -74,8 +74,6 @@ class CartViewModel @Inject constructor(
 
                 refreshCartData()
 
-                showSuccessMessage("Product added to cart successfully")
-
             } catch (e: Exception) {
                 handleError(e)
                 errorMessage = "Failed to add product to cart: ${e.message}"
@@ -88,7 +86,6 @@ class CartViewModel @Inject constructor(
     fun deleteFromCart(productId: String) {
         viewModelScope.launch {
             try {
-                isLoading = true
                 errorMessage = null
 
                 cartUseCase.deleteFromCart(productId)
@@ -112,7 +109,7 @@ class CartViewModel @Inject constructor(
                 delay(500)
                 refreshCartData()
 
-                showSuccessMessage("Product removed from cart successfully")
+//                showSuccessMessage("Product removed from cart successfully")
 
             } catch (e: Exception) {
                 refreshCartData()
@@ -135,11 +132,11 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun showSuccessMessage(message: String) {
-        viewModelScope.launch {
-            successMessage = message
-            delay(3000)
-            successMessage = null
-        }
-    }
+//    private fun showSuccessMessage(message: String) {
+//        viewModelScope.launch {
+//            successMessage = message
+//            delay(3000)
+//            successMessage = null
+//        }
+//    }
 }

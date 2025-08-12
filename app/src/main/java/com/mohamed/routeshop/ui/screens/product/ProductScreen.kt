@@ -107,18 +107,6 @@ fun ProductScreen(
                 .fillMaxSize()
                 .padding(16.dp),
         ) {
-
-//            Text(
-//                text = if (categoryList?.id?.length == selectedCategory.length)
-//                    categoryList.name ?:""
-//                else
-//                    selectedCategory,
-//                fontSize = 24.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.padding(bottom = 16.dp)
-//            )
-
-//            FeaturedBanner()
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyVerticalGrid(
@@ -138,69 +126,3 @@ fun ProductScreen(
     }
 }
 
-//@Preview(showSystemUi = true)
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun ProductScreenPreview() {
-//    ProductScreen()
-//}
-
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun ShoppingApp() {
-//    MaterialTheme {
-//        Scaffold(
-//            topBar = {
-//                TopAppBar(
-//                    title = {
-//                        Text(
-//                            text = "Shopping",
-//                            fontWeight = FontWeight.Bold
-//                        )
-//                    },
-//                    navigationIcon = {
-//                        IconButton(onClick = { /* Handle menu click */ }) {
-//                            Icon(
-//                                imageVector = Icons.Default.Menu,
-//                                contentDescription = "Menu"
-//                            )
-//                        }
-//                    },
-//                    actions = {
-//                        IconButton(onClick = { /* Handle search click */ }) {
-//                            Icon(
-//                                imageVector = Icons.Default.Search,
-//                                contentDescription = "Search"
-//                            )
-//                        }
-//                        IconButton(onClick = { /* Handle notifications click */ }) {
-//                            Icon(
-//                                imageVector = Icons.Default.Notifications,
-//                                contentDescription = "Notifications"
-//                            )
-//                        }
-//                        IconButton(onClick = { /* Handle profile click */ }) {
-//                            Icon(
-//                                imageVector = Icons.Default.Person,
-//                                contentDescription = "Profile"
-//                            )
-//                        }
-//                    },
-//                    colors = TopAppBarDefaults.topAppBarColors(
-//                        containerColor = Color.White,
-//                        titleContentColor = Color.Black
-//                    )
-//                )
-//            }
-//        ) { paddingValues ->
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .padding(paddingValues)
-//            ) {
-//                ProductScreen()
-//            }
-//        }
-//    }
-//}

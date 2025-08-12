@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mohamed.domain.model.cart.ProductsListItem
 import com.mohamed.routeshop.R
+import com.mohamed.routeshop.ui.theme.Colors
 import com.mohamed.routeshop.ui.viewmodel.CartViewModel
 
 @Composable
@@ -41,8 +42,7 @@ fun CartItemsCard(
     modifier: Modifier = Modifier,
     product: ProductsListItem,
     cartViewModel: CartViewModel = hiltViewModel(),
-
-    ) {
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -78,7 +78,7 @@ fun CartItemsCard(
                     modifier = modifier.padding(bottom = 20.dp)
                 )
                 Text(
-                    text = product.product?.quantity.toString() ?: "",
+                    text = "EGP ${product.price.toString()}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
@@ -91,10 +91,7 @@ fun CartItemsCard(
             ) {
                 Button(
                     onClick = {
-                        product.id.let {
-                            cartViewModel.deleteFromCart(product.product?.id!!)
-                        }
-
+                        cartViewModel.deleteFromCart(product.product?.id!!)
                     },
                     colors = ButtonDefaults.buttonColors(Color.Transparent),
                     modifier = modifier
@@ -104,7 +101,7 @@ fun CartItemsCard(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "",
-                        tint = Color(0xFF007BFF),
+                        tint = Colors.DarkGreen,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -113,22 +110,3 @@ fun CartItemsCard(
         }
     }
 }
-
-//@Preview(showSystemUi = true)
-//@Composable
-//private fun Prev() {
-//
-//    CartItemsCard(
-//        product = ProductList(
-//            id = "1",
-//            title = "Sample ProductCartItemDto",
-//            description = "This is a sample product description.",
-//            price = 100,
-//            priceAfterDiscount = 80,
-//            imageCover = "https://via.placeholder.com/150",
-//            images = listOf("https://via.placeholder.com/150", "https://via.placeholder.com/150"),
-//            ratingsAverage = 4.5,
-//            ratingsQuantity = 120
-//        ),
-//    )
-//}
