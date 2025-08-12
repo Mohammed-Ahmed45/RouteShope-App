@@ -1,5 +1,6 @@
 package com.mohamed.routeshop.ui.screens.product
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,12 +18,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -57,7 +61,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.mohamed.domain.model.product.ProductList
 import com.mohamed.routeshop.R
+import com.mohamed.routeshop.ui.navigation.Route
+import com.mohamed.routeshop.ui.theme.Colors
+import com.mohamed.routeshop.ui.utils.AddToCartDialog
 import com.mohamed.routeshop.ui.viewmodel.CartViewModel
 import com.mohamed.routeshop.ui.viewmodel.ProductViewModel
 
@@ -66,6 +74,7 @@ fun ProductDetailsScreen(
     modifier: Modifier = Modifier,
     productId: String = "",
     navController: NavController,
+    productItems: ProductList? = null,
     productViewModel: ProductViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel(),
 ) {
@@ -75,9 +84,22 @@ fun ProductDetailsScreen(
     var selectedColorIndex by remember { mutableIntStateOf(0) }
     var isFavorite by remember { mutableStateOf(false) }
     var isReadMore by remember { mutableStateOf(false) }
-
     val productItems = productViewModel.productDetailsList.firstOrNull()
 
+    val imageList = remember(productItems) {
+        mutableListOf<String>().apply {
+            productItems?.images?.forEach { image ->
+                if (!image.isNullOrBlank()) {
+                    add(image)
+                }
+            }
+            if (isEmpty() && !productItems?.imageCover.isNullOrBlank()) {
+                add(productItems?.imageCover!!)
+            }
+        }
+    }
+    val pagerState = rememberPagerState(pageCount = { imageList.size })
+    var showDialog by remember { mutableStateOf(false) }
     val sizes = listOf("38", "39", "40", "41", "42")
     val colors = listOf(
         Color.Black,
@@ -104,9 +126,11 @@ fun ProductDetailsScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_back),
+
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
+                tint = Colors.DarkGreen,
                 modifier = modifier
                     .size(20.dp)
                     .clickable { navController.popBackStack() }
@@ -128,17 +152,21 @@ fun ProductDetailsScreen(
                     tint = if (isFavorite) Color.Red else Color.Gray
                 )
 
-
-
                 Spacer(modifier = Modifier.width(16.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.ic_cart),
+                Icon(
+                    imageVector = Icons.Default.ShoppingCart,
                     contentDescription = "DataCart",
-                    modifier = modifier.size(20.dp)
+                    tint = Colors.DarkGreen,
+                    modifier = modifier
+                        .size(20.dp)
+                        .clickable {
+                            navController.navigate(Route.CART_SCREEN)
+                        }
                 )
             }
         }
 
+        // horizontal pager of images
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -148,20 +176,27 @@ fun ProductDetailsScreen(
             elevation = CardDefaults.cardElevation(16.dp)
         ) {
             Box {
+
                 val imageUrl = productItems?.images?.firstOrNull { !it.isNullOrBlank() }
                     ?: productItems?.imageCover
 
                 if (!imageUrl.isNullOrBlank()) {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = productItems?.title,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(16.dp)),
-                        contentScale = ContentScale.Crop,
-                        error = painterResource(R.drawable.img_product),
-                        placeholder = painterResource(R.drawable.img_product)
-                    )
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        AsyncImage(
+                            model = imageList[page],
+                            contentDescription = productItems?.title,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(16.dp)),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(R.drawable.ic_app),
+                            placeholder = painterResource(R.drawable.ic_app)
+                        )
+
+                    }
                 } else {
                     Image(
                         painter = painterResource(R.drawable.img_product),
@@ -171,6 +206,33 @@ fun ProductDetailsScreen(
                             .clip(RoundedCornerShape(16.dp)),
                         contentScale = ContentScale.Crop
                     )
+                }
+
+                //Page Indicators
+
+                if (imageList.size > 1) {
+                    Row(
+                        modifier = modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        repeat(imageList.size) { index ->
+                            val isSelected = pagerState.currentPage == index
+                            Box(
+                                modifier = modifier
+                                    .size(if (isSelected) 10.dp else 8.dp)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(
+                                        if (isSelected) Colors.DarkGreen else Color.White
+                                    )
+                                    .animateContentSize()
+                            )
+
+                        }
+
+                    }
+
                 }
 
                 // Discount Badge
@@ -198,29 +260,7 @@ fun ProductDetailsScreen(
                     }
                 }
 
-                // Image indicators (dots)
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    repeat(3) { index ->
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .background(
-                                    color = if (index == 0) {
-                                        Color.Blue
-                                    } else Color.LightGray,
-                                    shape = CircleShape
-                                )
-                        )
-                        if (index < 2) {
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
-                    }
-                }
+
             }
         }
 
@@ -258,14 +298,14 @@ fun ProductDetailsScreen(
                             text = "EGP ${productItems.priceAfterDiscount}",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Blue
+                            color = Colors.DarkGreen
                         )
                     } else {
                         Text(
                             text = "EGP ${productItems?.price ?: "3,500"}",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Blue
+                            color = Colors.DarkGreen
                         )
                     }
                 }
@@ -322,7 +362,7 @@ fun ProductDetailsScreen(
                 Text(
                     text = if (isReadMore) "Read Less" else "Read More",
                     fontSize = 12.sp,
-                    color = Color.Blue,
+                    color = Colors.DarkGreen,
                     modifier = Modifier
                         .clickable { isReadMore = !isReadMore }
                         .padding(top = 4.dp)
@@ -348,12 +388,12 @@ fun ProductDetailsScreen(
                             modifier = Modifier
                                 .size(40.dp)
                                 .background(
-                                    color = if (selectedSize == size) Color.Blue else Color.Transparent,
+                                    color = if (selectedSize == size) Colors.DarkGreen else Color.Transparent,
                                     shape = RoundedCornerShape(8.dp)
                                 )
                                 .border(
                                     width = 1.dp,
-                                    color = if (selectedSize == size) Color.Blue else Color.LightGray,
+                                    color = if (selectedSize == size) Colors.DarkGreen else Color.LightGray,
                                     shape = RoundedCornerShape(8.dp)
                                 )
                                 .clickable { selectedSize = size },
@@ -423,7 +463,7 @@ fun ProductDetailsScreen(
                         text = "EGP ${(productItems?.priceAfterDiscount ?: productItems?.price ?: 3500) * quantity}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Blue
+                        color = Colors.DarkGreen
                     )
                 }
 
@@ -443,7 +483,7 @@ fun ProductDetailsScreen(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Decrease",
-                            tint = Color.Blue,
+                            tint = Colors.DarkGreen,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -463,7 +503,7 @@ fun ProductDetailsScreen(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Increase",
-                            tint = Color.Blue,
+                            tint = Colors.DarkGreen,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -472,23 +512,26 @@ fun ProductDetailsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+
             // Add to Cart Button
             Button(
                 onClick = {
                     cartViewModel.addToCart(productId)
+                    showDialog = true
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Blue
+                    containerColor = Colors.DarkGreen
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.ShoppingCart,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier
+                        .size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -499,17 +542,30 @@ fun ProductDetailsScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+
+
+            if (showDialog) {
+                AddToCartDialog(
+                    onDismiss = { showDialog = false }
+                )
+            }
+
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showSystemUi = true)
 @Composable
 fun ProductDetailsScreenPreview() {
-    ProductDetailsScreen(
-        navController = rememberNavController(),
-        productId = "123",
-        productViewModel = hiltViewModel()
+    val navController = rememberNavController()
+    val productItems = ProductList(
+        title = "Nike Air Jordan",
+        price = 3500.0.toInt(),
+        description = "Nike is a multinational corporation that designs, develops, and sells athletic footwear, apparel, and accessories.",
+        images = listOf("image1.jpg", "image2.jpg"),
+        imageCover = "cover.jpg",
+        ratingsAverage = 4.8,
+        ratingsQuantity = 7500
     )
+    ProductDetailsScreen(navController = navController, productItems = productItems)
 }

@@ -2,17 +2,19 @@ package com.mohamed.routeshop.ui.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -20,6 +22,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mohamed.domain.model.product.ProductList
 import com.mohamed.routeshop.R
+import com.mohamed.routeshop.ui.theme.Colors
+import com.mohamed.routeshop.ui.viewmodel.CartViewModel
 import com.mohamed.routeshop.ui.viewmodel.WishListViewModel
 
 @Composable
@@ -41,7 +50,9 @@ fun WishlistItemCard(
     modifier: Modifier = Modifier,
     product: ProductList,
     wishListViewModel: WishListViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,7 +76,7 @@ fun WishlistItemCard(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column(
-                modifier = Modifier.width(160.dp),
+                modifier = Modifier.width(128.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
@@ -79,9 +90,9 @@ fun WishlistItemCard(
                 Text(
                     text = if (product.priceAfterDiscount != null) {
 
-                        "Price: EGP ${product.priceAfterDiscount}"
+                        "EGP ${product.priceAfterDiscount}"
                     } else {
-                        "Price: EGP ${product.price}"
+                        "EGP ${product.price}"
                     },
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
@@ -90,25 +101,63 @@ fun WishlistItemCard(
             }
             Spacer(modifier = Modifier.width(8.dp))
 
-            Box(
+            Column(
                 modifier = Modifier.fillMaxSize()
             ) {
+
+
                 Button(
                     onClick = {
+
                         wishListViewModel.deleteFromWishList(product.id!!)
                     },
                     colors = ButtonDefaults.buttonColors(Color.Transparent),
                     modifier = modifier
                         .background(Color.Transparent)
-                        .align(alignment = Alignment.TopEnd)
+                        .align(alignment = AbsoluteAlignment.Right)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "",
-                        tint = Color(0xFF007BFF),
+                        tint = Colors.DarkGreen,
                         modifier = Modifier.size(24.dp)
                     )
                 }
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+                        cartViewModel.addToCart(product.id!!)
+                        showDialog = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(34.dp)
+                        .align(alignment = Alignment.End),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Colors.DarkGreen
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(12.dp)
+                    )
+                    Text(
+                        text = "Add to cart",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
+                if (showDialog) {
+                    AddToCartDialog(
+                        onDismiss = { showDialog = false }
+                    )
+                }
+
 
             }
         }
@@ -118,18 +167,17 @@ fun WishlistItemCard(
 @Preview(showSystemUi = true)
 @Composable
 private fun Prev() {
-
     WishlistItemCard(
         product = ProductList(
             id = "1",
-            title = "Sample ProductCartItemDto",
+            title = "Sample Product",
             description = "This is a sample product description.",
             price = 100,
             priceAfterDiscount = 80,
             imageCover = "https://via.placeholder.com/150",
-            images = listOf("https://via.placeholder.com/150", "https://via.placeholder.com/150"),
+            images = listOf("https://via.placeholder.com/150"),
             ratingsAverage = 4.5,
             ratingsQuantity = 120
-        ),
+        )
     )
 }
