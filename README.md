@@ -33,6 +33,8 @@ The app is built with **Kotlin** and follows **Clean Architecture** principles f
 
 # 🌟 Libraries and Technologies Used
 
+# 🌟 Libraries and Technologies Used
+
 - **Kotlin & Jetpack Compose** → modern declarative UI framework.  
 - **Navigation Component** → single-activity navigation.  
 - **Clean Architecture & Repository Pattern** → separation of concerns and scalability.  
@@ -40,10 +42,7 @@ The app is built with **Kotlin** and follows **Clean Architecture** principles f
 - **Dagger Hilt** → dependency injection.  
 - **StateFlow & Coroutines** → asynchronous programming and reactive streams.  
 - **Retrofit** → API calls and data fetching.  
-- **Firebase** → backend services (authentication, Firestore, realtime database, FCM).  
 - **Coil** → lightweight image loading.  
-- **Lottie Animations** → beautiful UI animations.  
-
 ---
 
 # 🚀 Features
