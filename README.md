@@ -29,8 +29,6 @@ The app is built with **Kotlin** and follows **Clean Architecture** principles f
 
 # 🌟 Libraries and Technologies Used
 
-# 🌟 Libraries and Technologies Used
-
 - **Kotlin & Jetpack Compose** → modern declarative UI framework.  
 - **Navigation Component** → single-activity navigation.  
 - **Clean Architecture & Repository Pattern** → separation of concerns and scalability.  
@@ -43,8 +41,12 @@ The app is built with **Kotlin** and follows **Clean Architecture** principles f
 
 # 🚀 Features
 
+# 🚀 Features
+
 - Browse products by categories.  
-- Add products to cart.  
-- Place and track orders.  
+- Search for products easily.  
+- Add and remove products from cart.  
+- Add and remove products from favorites.  
 - Smooth UI with animations.  
 - Modern architecture for scalability.  
+ 
