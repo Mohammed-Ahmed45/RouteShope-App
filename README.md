@@ -5,10 +5,6 @@ The app is built with **Kotlin** and follows **Clean Architecture** principles f
 
 ---
 
-## 📌 Project Link
-👉 [RouteShope-App](https://github.com/Mohammed-Ahmed45/RouteShope-App)
-
----
 
 ## 👤 User App
 
