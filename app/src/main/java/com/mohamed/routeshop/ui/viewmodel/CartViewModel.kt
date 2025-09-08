@@ -10,7 +10,6 @@ import com.mohamed.domain.model.cart.DataCart
 import com.mohamed.domain.usecases.cart.CartUseCase
 import com.mohamed.routeshop.ui.error.handleError
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -87,10 +86,7 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 errorMessage = null
-
                 cartUseCase.deleteFromCart(productId)
-
-
                 val currentCart = _cartData.value
                 currentCart?.let { cart ->
                     val updatedProducts = cart.products.filter {
@@ -106,10 +102,7 @@ class CartViewModel @Inject constructor(
                     _cartData.value = updatedCart
                 }
 
-                delay(500)
                 refreshCartData()
-
-//                showSuccessMessage("Product removed from cart successfully")
 
             } catch (e: Exception) {
                 refreshCartData()
@@ -129,6 +122,7 @@ class CartViewModel @Inject constructor(
                 _cartData.value = freshData
             }
         } catch (e: Exception) {
+            handleError(e)
         }
     }
 
